@@ -1,7 +1,7 @@
 import express from "express";
 import ProductsServices from "../Services/ProductServices.js";
 import { ValidatorHandler } from "../middlewares/ValidatorHandle.js";
-import { CreateProductSchema, UpdateProductSchema, GetProductSchema } from "../shemas/ProductSchema.js";
+import { CreateProductSchema, UpdateProductSchema, GetProductSchema } from "../schemas/ProductSchema.js";
 
 const ProductsRouter = express.Router()
 const productService = new ProductsServices();
