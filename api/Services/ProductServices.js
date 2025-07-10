@@ -1,10 +1,13 @@
 import { faker } from '@faker-js/faker'
 import * as Boom from '@hapi/boom';
+import pool from '../../libs/postgresPool.js';
+import sequelize from '../../libs/sequelize.js';
+import { Op } from 'sequelize';
+
 class ProductsServices{
 
   constructor(){
-    this.products = []
-    this.generate()
+
   }
 
   async generate(){
@@ -21,44 +24,47 @@ class ProductsServices{
  }
 
   async create(data) {
-    const newproduct= {
-      id: faker.string.uuid(),
-      ...data
-    }
-    this.products.push(newproduct)
+    const newproduct= await sequelize.models.Products.create(data);
     return newproduct
   }
 
-  async find() {
-    return new Promise((resolve,reject) => {
-      setTimeout(()=> {
-        resolve(this.products)
-      },3000)
-    })
+  async find(query) {
+  const options= {
+    include: "category",
+    where: {}
+  }
+  const {limit, offset, price, price_min, price_max}= query
+  if(limit && offset){
+    options.limit= limit
+    options.offset= offset
+  }
+  if(price){
+    options.where.price = price
+  }
+  if(price_min && price_max){
+    options.where.price= {
+      [Op.gte]: price_min,
+      [Op.lte]: price_max
+    }
+  }
+    const products = await sequelize.models.Products.findAll(options);
+  return products
 
   }
 
   async findone(id) {
-    const product= this.products.find(item => item.id===id)
+     const product= await sequelize.models.Products.findByPk(id)
     if(!product)
-      throw Boom.notFound('Product not found')
-     if(product.isBlock)
-      throw Boom.conflict('Product is block')
-    return product
+     throw Boom.notFound("Product not found")
+    return product;
   }
 
  async update(id, changes) {
-    const index= this.products.findIndex(item => item.id===id)
-    if (index === -1){
-      throw Boom.notFound('Product not found')
-    }
-    const product= this.products[index]
-    this.products[index]= {
-      ...product,
-      ...changes
-    }
-    return this.products[index]
-  }
+        const product= await sequelize.models.Products.findByPk(id)
+    if(!product)
+     throw Boom.notFound("Product not found")
+     return await product.update(changes)
+}
 
   async delete(id){
       const index= this.products.findIndex(item => item.id===id)

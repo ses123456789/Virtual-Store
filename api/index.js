@@ -1,7 +1,7 @@
 import express from "express";
 import cors from 'cors';
 import RouterAPI from "./routes/index.js"
-import {logErrors, errorHandler, BoomErrorHandler} from "./middlewares/ErrorHandler.js";
+import {logErrors, errorHandler, BoomErrorHandler, ormErrorHandler} from "./middlewares/ErrorHandler.js";
 
 const app= express()
 const port= process.env.PORT || 3000
@@ -15,6 +15,7 @@ app.get("/api", (req,res)=>(
 
 RouterAPI(app)
 app.use(logErrors)
+app.use(ormErrorHandler)
 app.use(BoomErrorHandler)
 app.use(errorHandler)
 

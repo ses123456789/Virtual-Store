@@ -1,16 +1,18 @@
 import express from "express";
 import ProductsServices from "../Services/ProductServices.js";
 import { ValidatorHandler } from "../middlewares/ValidatorHandle.js";
-import { CreateProductSchema, UpdateProductSchema, GetProductSchema } from "../schemas/ProductSchema.js";
+import { CreateProductSchema, UpdateProductSchema, GetProductSchema, QueryProductSchema } from "../schemas/ProductSchema.js";
 
 const ProductsRouter = express.Router()
 const productService = new ProductsServices();
 
-ProductsRouter.get("/",async (req,res)=>{
-
-  const products= await productService.find()
-
-  res.json(products)
+ProductsRouter.get("/",ValidatorHandler(QueryProductSchema, "query"),async (req,res,next)=>{
+   try {
+      const products = await productService.find(req.query);
+      res.json(products);
+    } catch (error) {
+      next(error);
+    }
 })
 
 ProductsRouter.get('/filter', (req, res) => {

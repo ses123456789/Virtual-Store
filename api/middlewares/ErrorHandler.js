@@ -1,3 +1,5 @@
+import { ValidationError } from "sequelize"
+
 export  function logErrors(err,req,res,next){
   console.error(err)
   next(err)
@@ -17,5 +19,15 @@ const {output}= err
 } else{
   next(err)
 }
+}
 
+export function ormErrorHandler(err, req, res, next){
+  if(err instanceof ValidationError){
+    res.status(409).json({
+      statusCode: 409,
+      message: err.name,
+      errors: err.errors
+    })
+  }
+  next(err)
 }
