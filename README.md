@@ -33,6 +33,11 @@ Key Features:
 
 9 SQLite
 
-To run the program, open a terminal in the program's folder and use the command npm run dev.
-10 All endpoints are in the postman collection
+10 All endpoints are in the postman collection  
 
+
+To run the program, open a terminal in the program's folder and use the command npm run dev.  
+
+App worked in 2 courses:  
+* "Backend con Node.js: API Rest con Express.js"
+* "Backend con Node.js: Bases de datos con PostgreSQL"
